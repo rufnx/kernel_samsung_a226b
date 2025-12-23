@@ -4,6 +4,9 @@
 #
 
 # Each configuration option enables a list of files.
+ifeq ($(WT_COMPILE_FACTORY_VERSION),yes)
+    ccflags-y := -DFACTORY_VERSION
+endif
 
 obj-$(CONFIG_INPUT_88PM860X_ONKEY)	+= 88pm860x_onkey.o
 obj-$(CONFIG_INPUT_88PM80X_ONKEY)	+= 88pm80x_onkey.o
@@ -82,3 +85,4 @@ obj-$(CONFIG_INPUT_WM831X_ON)		+= wm831x-on.o
 obj-$(CONFIG_INPUT_XEN_KBDDEV_FRONTEND)	+= xen-kbdfront.o
 obj-$(CONFIG_INPUT_YEALINK)		+= yealink.o
 obj-$(CONFIG_INPUT_IDEAPAD_SLIDEBAR)	+= ideapad_slidebar.o
+obj-$(CONFIG_INPUT_ABOV)	+= abov_sar_mmi_overlay.o

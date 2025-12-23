@@ -572,6 +572,13 @@ config GPIO_LOONGSON1
 	help
 	  Say Y or M here to support GPIO on Loongson1 SoCs.
 
+config GPIO_PCAL6416A
+	bool "PCAL6416A GPIO expander"
+	depends on I2C
+	default n
+	help
+	  GPIO driver for PCAL6416A I2C-based GPIO expander.
+
 endmenu
 
 menu "Port-mapped I/O GPIO drivers"

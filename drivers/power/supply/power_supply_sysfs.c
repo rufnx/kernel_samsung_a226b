@@ -42,12 +42,13 @@ static struct device_attribute power_supply_attrs[];
 
 static const char * const power_supply_type_text[] = {
 	"Unknown", "Battery", "UPS", "Mains", "USB",
-	"USB_DCP", "USB_CDP", "USB_ACA", "USB_C",
-	"USB_PD", "USB_PD_DRP", "BrickID"
+	"USB_DCP", "USB_CDP", "USB_ACA", "Wireless", "USB_C",
+	"USB_PD", "USB_PD_DRP", "BrickID", "OTG"
 };
 
 static const char * const power_supply_status_text[] = {
-	"Unknown", "Charging", "Discharging", "Not charging", "Full"
+	"Unknown", "Charging", "Discharging", "Not charging", "Full",
+	"Cmd discharging"
 };
 
 static const char * const power_supply_charge_type_text[] = {
@@ -121,6 +122,11 @@ static ssize_t power_supply_show_property(struct device *dev,
 			       power_supply_scope_text[value.intval]);
 	else if (off >= POWER_SUPPLY_PROP_MODEL_NAME)
 		return sprintf(buf, "%s\n", value.strval);
+//zhaosidong.wt, CHG REQ
+	else if (off == POWER_SUPPLY_PROP_NEW_CHARGE_TYPE)
+		return sprintf(buf, "%s\n", value.strval);
+	else if (off == POWER_SUPPLY_PROP_REAL_TYPE)
+		return sprintf(buf, "%s\n", value.strval);
 
 	if (off == POWER_SUPPLY_PROP_CHARGE_COUNTER_EXT)
 		return sprintf(buf, "%lld\n", value.int64val);
@@ -135,6 +141,7 @@ static ssize_t power_supply_store_property(struct device *dev,
 	struct power_supply *psy = dev_get_drvdata(dev);
 	const ptrdiff_t off = attr - power_supply_attrs;
 	union power_supply_propval value;
+	int x = 0;
 
 	/* maybe it is a enum property? */
 	switch (off) {
@@ -167,11 +174,19 @@ static ssize_t power_supply_store_property(struct device *dev,
 	if (ret < 0) {
 		long long_val;
 
-		ret = kstrtol(buf, 10, &long_val);
-		if (ret < 0)
-			return ret;
+//zhaosidong.wt,MODIFY, battery capacity control in demo mode
+		if (off == POWER_SUPPLY_PROP_STORE_MODE) {
+			if (sscanf(buf, "%10d\n", &x) == 1) {
+				pr_err("#### power_supply_store_property x(%d)\n", x );
+				value.intval = x;
+			}
+		} else {
+			ret = kstrtol(buf, 10, &long_val);
+			if (ret < 0)
+				return ret;
 
-		ret = long_val;
+			ret = long_val;
+		}
 	}
 
 	value.intval = ret;
@@ -249,6 +264,21 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(precharge_current),
 	POWER_SUPPLY_ATTR(charge_term_current),
 	POWER_SUPPLY_ATTR(calibrate),
+//zhaosidong.wt, 2020/12/16, add more power supply attr.
+	POWER_SUPPLY_ATTR(typec_cc_orientation),
+	POWER_SUPPLY_ATTR(afc_flag),
+	POWER_SUPPLY_ATTR(batt_misc_event),
+	POWER_SUPPLY_ATTR(batt_current_ua_now),
+	POWER_SUPPLY_ATTR(batt_slate_mode),
+	POWER_SUPPLY_ATTR(batt_current_event),
+	POWER_SUPPLY_ATTR(hv_charger_status),
+	POWER_SUPPLY_ATTR(store_mode),
+	POWER_SUPPLY_ATTR(new_charge_type),
+	POWER_SUPPLY_ATTR(real_type),
+	POWER_SUPPLY_ATTR(hv_disable),
+	POWER_SUPPLY_ATTR(batt_full_capacity),
+//+Bug660501,lvyuanchuan.wt ,2021/0521, reading charging vol
+	POWER_SUPPLY_ATTR(voltage),
 	/* Local extensions */
 	POWER_SUPPLY_ATTR(usb_hc),
 	POWER_SUPPLY_ATTR(usb_otg),
