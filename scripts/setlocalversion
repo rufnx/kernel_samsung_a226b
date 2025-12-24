@@ -83,7 +83,7 @@ scm_version()
 			git --no-optional-locks status -uno --porcelain 2>/dev/null ||
 			git diff-index --name-only HEAD
 		} | grep -qvE '^(.. )?scripts/package'; then
-			printf '%s' -dirty
+			printf '%s' -perf
 		fi
 
 		# All done with git
@@ -107,7 +107,7 @@ scm_version()
 		# Are there uncommitted changes?
 		# These are represented by + after the changeset id.
 		case "$hgid" in
-			*+|*+\ *) printf '%s' -dirty ;;
+			*+|*+\ *) printf '%s' -perf ;;
 		esac
 
 		# All done with mercurial
@@ -176,7 +176,6 @@ else
 	# LOCALVERSION= is not specified
 	if test "${LOCALVERSION+set}" != "set"; then
 		scm=$(scm_version --short)
-		res="$res${scm:++}"
 	fi
 fi
 
