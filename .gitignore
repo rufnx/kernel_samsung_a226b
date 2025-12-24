@@ -41,12 +41,16 @@
 *.symtypes
 *.tar
 *.xz
+*.orig
 Module.symvers
 modules.builtin
 
 #
 # Top-level generic files
 #
+out/
+clang/
+gcc/
 /tags
 /TAGS
 /linux
