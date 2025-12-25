@@ -72,7 +72,7 @@ build() {
   info "Start build"
   compile 2>&1 | tee build.log
 
-  local OBJ=out/arch/arm64/boot
+  local OBJ=$(pwd)/out/arch/arm64/boot
   local BRANCH=a22x
   local ZIPNAME=AnyKernel3-A226.zip
   local OUTPUT VERSION
@@ -93,8 +93,6 @@ build() {
   cd result
 
   ok "Kernel build success"
-
-  [[ -f $ZIPNAME ]] && rm -f $ZIPNAME
 
   if [[ ! -d ak ]]; then
     fetch_anykernel $BRANCH ak
