@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -euo pipefail
 
 N="\e[0m"
@@ -14,7 +15,7 @@ warn() { _log "[!]" "$Y" "$1"; }
 err()  { _log "[x]" "$R" "$1"; exit 1; }
 
 fetch() {
-  curl -LSs https://raw.githubusercontent.com/rufnx/personal_patch/master/clone.sh | bash -s $1 $2
+  curl -LSs https://raw.githubusercontent.com/rufnx/toolchains/README/clone.sh | bash -s $1 $2
 }
 
 fetch_anykernel() {
@@ -32,6 +33,9 @@ toolchains() {
 }
 
 setup_env() {
+
+  toolchains
+ 
   export PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$PATH
   export USE_CCACHE=1
   export KCFLAGS=-w
@@ -40,7 +44,7 @@ setup_env() {
 }
 
 compile() {
-  toolchains
+  
   setup_env
 
   local DF_DIR=arch/arm64/configs
